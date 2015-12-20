@@ -16,20 +16,12 @@ import java.util.concurrent.TimeoutException;
  */
 @Path("/")
 public class Service {
-    public static final String NAME="Demo";
-
-    @GET
-    @Path("/name")
-    @Produces(MediaType.TEXT_PLAIN)
-    public String name() {
-        return NAME;
-    }
 
     @GET
     @Path("/async-name")
     @Produces(MediaType.TEXT_PLAIN)
     public void asyncGet(@Suspended final AsyncResponse asyncResponse) {
-        CompletableFuture.completedFuture(NAME)
+        CompletableFuture.completedFuture("bla")
                 .thenApplyAsync(asyncResponse::resume)
                 .exceptionally(asyncResponse::resume);
 
