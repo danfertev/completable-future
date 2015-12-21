@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.function.Consumer;
@@ -15,7 +16,9 @@ import java.util.stream.Collectors;
  *         21.12.2015 1:45
  */
 public class FileService {
-    public static void readFileAsync(String path, Consumer<String> onSuccess, Consumer<Throwable> onFailure) {
+    public static void readFileAsync(String path,
+                                     Consumer<String> onSuccess,
+                                     Consumer<Throwable> onFailure) {
         ForkJoinPool.commonPool().submit(() -> {
             try {
                 final List<String> lines = Files.readAllLines(Paths.get(path), Charset.defaultCharset());
@@ -46,5 +49,9 @@ public class FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static CompletableFuture<String> readFileAsync(String path) {
+        return CompletableFuture.supplyAsync(() -> readFile(path));
     }
 }

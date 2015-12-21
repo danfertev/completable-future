@@ -1,6 +1,8 @@
 package su.jet;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static su.jet.FileService.readFileAsync;
 
@@ -10,12 +12,24 @@ import static su.jet.FileService.readFileAsync;
  */
 public class CallbackHell {
     public static void main(String[] args) throws IOException {
-//        readFileAsync("path.txt", System.out::println, Throwable::printStackTrace);
+        final ExecutorService executor = Executors.newSingleThreadExecutor();
+        readFileAsync(
+                "path.txt",
+                executor,
+                System.out::println,
+                Throwable::printStackTrace
+        );
 
 
         readFileAsync(
                 "path.txt",
-                path -> readFileAsync(path, System.out::println, Throwable::printStackTrace),
+                executor,
+                path -> readFileAsync(
+                        path,
+                        executor,
+                        System.out::println,
+                        Throwable::printStackTrace
+                ),
                 Throwable::printStackTrace
         );
 
